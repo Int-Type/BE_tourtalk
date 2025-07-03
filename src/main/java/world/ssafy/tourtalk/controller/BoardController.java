@@ -1,3 +1,19 @@
+/*
+ * BoardController.java
+ * 
+ * 게시판 관련 기능을 제공하는 REST 컨트롤러 클래스입니다.
+ * - 게시글 작성, 조회, 수정, 삭제 기능 제공
+ * - 게시글 검색 및 페이징 처리 기능 포함
+ * - 마이페이지에서 본인 게시글 조회 기능 제공
+ * 
+ * Spring Security 기반 인증 정보를 활용하여 사용자 권한 체크를 수행합니다.
+ * 모든 응답은 ResponseEntity로 표준화하여 클라이언트에 전달합니다.
+ * 
+ * @author 정수형
+ * @version 1.0
+ * @since 2025.07.03
+ */
+
 package world.ssafy.tourtalk.controller;
 
 import org.springframework.dao.DataAccessException;
