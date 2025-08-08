@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
-import world.ssafy.tourtalk.model.dto.Member.Role;
+import world.ssafy.tourtalk.model.dto.enums.Role;
 
 public class RoleTypeHandler extends BaseTypeHandler<Role>{
 

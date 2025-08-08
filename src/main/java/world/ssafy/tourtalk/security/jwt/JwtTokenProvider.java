@@ -1,11 +1,9 @@
 package world.ssafy.tourtalk.security.jwt;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.security.Key;
-import java.util.Base64;
 import java.util.List;
-
-import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,22 +13,27 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import world.ssafy.tourtalk.model.dto.enums.Role;
 
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
 	private final Key key;
     private final long validityInMs = 3600000; // 1시간
 	
-    public JwtTokenProvider(@Value("${jwt.secret}") String rawSecretKey) {
-    	byte[] keyBytes = Base64.getEncoder().encode(rawSecretKey.getBytes());
-        this.key = new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
     
     public String createToken(int mno, String userId, String nickname, Role role) {
@@ -55,9 +58,16 @@ public class JwtTokenProvider {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
-            return false;
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            log.error("JWT token is expired: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty: {}", e.getMessage());
         }
+        return false;
     }
     
     // 토큰에서 사용자 ID 꺼내기

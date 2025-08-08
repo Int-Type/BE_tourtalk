@@ -2,7 +2,7 @@ package world.ssafy.tourtalk.model.typehandler;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import world.ssafy.tourtalk.model.dto.MemberDetails.Gender;
+import world.ssafy.tourtalk.model.dto.enums.Gender;
 
 import java.sql.*;
 
